@@ -1,0 +1,15 @@
+ID;Bezeichner;Footprint;Stückzahl;Bezeichnung;Anbieter und Referenz
+1;J1,J2;JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical;2;Conn_01x03_Male;
+2;U6;TSSOP-20_4.4x6.5mm_P0.65mm;1;74LV8154;
+3;R2,R1;R_0603_1608Metric;2;10k;
+4;D1,D2;D_SOD-323;2;1N4448;
+5;C2,C1;C_0603_1608Metric;2;22pF;
+6;QA1;Quarz-Adapter;1;Quarz-Adapter;
+7;Y1;Crystal_SMD_EuroQuartz_MJ-4Pin_5.0x3.2mm;1;16MHz;
+8;U2,U1,U3,U4;SSOP-16_4.4x5.2mm_P0.65mm;4;74LS390;
+9;U7;SOT-23-5;1;74AHC1G04;
+10;U5;TQFP-32_7x7mm_P0.8mm;1;ATmega328PB-A;
+11;C3;C_0603_1608Metric;1;100nF;
+12;J3;JST_EH_B4B-EH-A_1x04_P2.50mm_Vertical;1;Conn_01x04_Male;
+13;SW1;SW_DIP_SPSTx04_Slide_KingTek_DSHP04TS_W7.62mm_P1.27mm;1;SW_DIP_x04;
+14;J4;Molex_PicoBlade_53047-0610_1x06_P1.25mm_Vertical;1;Conn_01x06_Male;
