@@ -43,7 +43,7 @@ void ESPboyInit::begin(char *appName) {
   tft.fillScreen(TFT_BLACK);
 
 //draw ESPboylogo  
-  tft.drawXBitmap(4, 4, ESPboyLogo, 71, 55, TFT_BLUE);
+  tft.drawXBitmap(42, 22, ESPboyLogo, 44, 44, TFT_YELLOW);
   tft.setTextSize(1);
   tft.setTextColor(TFT_BLUE);
   tft.drawString (appName, (128-(strlen(appName)*6))/2, 112);
