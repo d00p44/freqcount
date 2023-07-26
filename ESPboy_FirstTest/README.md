@@ -1,3 +1,6 @@
+Modified Version of https://github.com/ESPboy-edu/ESPboy_FirstTest to run Freq Count on ESPBoy
+
+
 # Try "First test" to check your ESPboy after assembling
 www.espboy.com project
 
