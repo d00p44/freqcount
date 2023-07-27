@@ -20,10 +20,10 @@ ESPboyInit myESPboy;
 	#define Y6 14
 	#define Y7 15
 	
-	#define CE_Not 7 // V1.1x, pin formerly called latch, now enables clear
-	#define C_state 8 // V1.1x, was 'clear' now monitors clock
+	#define CE_Not 6 // V1.1x, pin formerly called latch, now enables clear
+	#define C_state 7 // V1.1x, was 'clear' now monitors clock
 
-  unsigned long freq = 1.5687;
+  unsigned long freq;
 
 Adafruit_MCP23017 mcp2;
 uint16_t lcdbright = 4095;
@@ -43,7 +43,7 @@ void setup(){
   strip.show();   // make sure it is visible
   strip.clear();  // Initialize all pixels to 'off'
   strip.setBrightness(25);
-  /*mcp2.begin(1); // Init MCP23017 at address 0x21
+  mcp2.begin(1); // Init MCP23017 at address 0x21
   mcp2.pinMode(GAL, OUTPUT);
 	mcp2.pinMode(GAU, OUTPUT);
 	mcp2.pinMode(GBL, OUTPUT);
@@ -66,9 +66,10 @@ void setup(){
 	mcp2.digitalWrite(GBU, HIGH);
 	
 	mcp2.digitalWrite(CE_Not, HIGH);
-  //while(!mcp2.digitalRead(C_state)); // assume LOW
-  //while(mcp2.digitalRead(C_state)); // now went to HIGH
-  //while(!mcp2.digitalRead(C_state));*/
+  while(!mcp2.digitalRead(C_state)){yield();} // assume LOW
+  while(mcp2.digitalRead(C_state)){yield();} // now went to HIGH
+  while(!mcp2.digitalRead(C_state)){yield();}
+
 }
 
 
@@ -87,13 +88,12 @@ void loop(){
 
 
 
-     count();
+     
 */
 
 
    
    
-
    myESPboy.tft.setRotation(0);
 	myESPboy.tft.setCursor(10, 10);
 	myESPboy.tft.setTextSize(2);
@@ -107,7 +107,7 @@ void loop(){
   sfreq = String(freq);
    int laenge = sfreq.length();
    float flfreq;
- 
+ count();
    
 
 switch (laenge) {
@@ -284,7 +284,7 @@ uint8_t get_byte()
 		
 	}
   void count(){
-  while(mcp2.digitalRead(C_state)); // stay until LOW
+  while(mcp2.digitalRead(C_state)){yield();} // stay until LOW
 	
 	// Now a counting period has ended and data being latched
 	delay(1); // allow 2 ms to latch before clear
@@ -292,8 +292,8 @@ uint8_t get_byte()
 	
 	// Now, clock will determine when to remove clear signal
 	
-	//read32();
-  while(!mcp2.digitalRead(C_state)); // Stay until HIGH and loop back
+	read32();
+  while(!mcp2.digitalRead(C_state)){yield();}// Stay until HIGH and loop back
 	
 	mcp2.digitalWrite(CE_Not, HIGH);
   }
