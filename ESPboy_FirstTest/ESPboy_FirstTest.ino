@@ -3,10 +3,10 @@
 ESPboyInit myESPboy;
 // Define I/O pins
 
-	#define GAL 1 // These pins select 1 of the 4 bytes of data to access
-	#define GAU 2
-	#define GBL 3
-	#define GBU 4
+	#define GAL 0 // These pins select 1 of the 4 bytes of data to access
+	#define GAU 1
+	#define GBL 2
+	#define GBU 3
 	
 	// Next 8 pins have the 8 bits of count data
 	// Note I can read 0 thru 5 with PINC and 7 & 8 with PINB
@@ -27,23 +27,32 @@ ESPboyInit myESPboy;
 
 Adafruit_MCP23017 mcp2;
 uint16_t lcdbright = 4095;
- 
-// the data pin for the NeoPixels
+   // LED init
 int neoPixelPin = D4;
-
-// How many NeoPixels we will be using, charge accordingly
 int numPixels = 1;
-
-// Instatiate the NeoPixel from the ibrary
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(numPixels, neoPixelPin, NEO_GRB + NEO_KHZ800);
   
+
+  
 void setup(){
-  myESPboy.begin("Freq Count Test");
+  myESPboy.begin("Freq Counter v0.2.1");  
+//Led init
   strip.begin();  // initialize the strip
   strip.show();   // make sure it is visible
   strip.clear();  // Initialize all pixels to 'off'
   strip.setBrightness(25);
-  mcp2.begin(1); // Init MCP23017 at address 0x21
+
+//MCP2 init  
+mcp2.begin(1); // Init MCP23017 at address 0x21
+  for (int i=8;i<=15;i++){  
+     mcp2.pinMode(i, INPUT);
+  }
+  for (int i=0;i<=6;i++){  
+     mcp2.pinMode(i, OUTPUT);
+     mcp2.pullUp(i, HIGH);}
+     mcp2.pinMode(C_state, INPUT);
+  
+  /*
   mcp2.pinMode(GAL, OUTPUT);
 	mcp2.pinMode(GAU, OUTPUT);
 	mcp2.pinMode(GBL, OUTPUT);
@@ -58,18 +67,17 @@ void setup(){
 	mcp2.pinMode(Y5, INPUT);
 	mcp2.pinMode(Y6, INPUT);
 	mcp2.pinMode(Y7, INPUT);
-	// pinMode(spkrpin, OUTPUT);
 	
 	mcp2.digitalWrite(GAL, HIGH); // These 4 lines are active LOW
 	mcp2.digitalWrite(GAU, HIGH);
 	mcp2.digitalWrite(GBL, HIGH);
-	mcp2.digitalWrite(GBU, HIGH);
-	
+	mcp2.digitalWrite(GBU, HIGH);	
 	mcp2.digitalWrite(CE_Not, HIGH);
-  while(!mcp2.digitalRead(C_state)){yield();} // assume LOW
-  while(mcp2.digitalRead(C_state)){yield();} // now went to HIGH
+*/
+  while(!mcp2.digitalRead(C_state)){yield();} 
+  while(mcp2.digitalRead(C_state)){yield();} 
   while(!mcp2.digitalRead(C_state)){yield();}
-
+  //Clock is Running
 }
 
 
@@ -93,39 +101,54 @@ void loop(){
 
 
    
-   
-   myESPboy.tft.setRotation(0);
+  
+  myESPboy.tft.setRotation(0);
 	myESPboy.tft.setCursor(10, 10);
 	myESPboy.tft.setTextSize(2);
 	char* fr = ("Frequenz: ");
   char* ks = ("kein Signal");
-  myESPboy.tft.setTextColor(TFT_BLUE);
+  myESPboy.tft.setTextColor(TFT_YELLOW);
   myESPboy.tft.drawString (fr, (128-(strlen(fr)*12))/2, 4);
   //String freq = Serial.readString();
-  
+   count();
    String sfreq; 
   sfreq = String(freq);
    int laenge = sfreq.length();
    float flfreq;
- count();
+ myESPboy.tft.setTextSize(1);
+//myESPboy.tft.drawNumber (freq, 10, 80);
+//myESPboy.tft.drawString (sfreq, 10, 110);
    
 
 switch (laenge) {
   default:
+    if(freq=0){
     myESPboy.tft.setTextColor(TFT_RED);
     myESPboy.tft.setTextSize(1);
     myESPboy.tft.drawString (ks, (128-(strlen(ks)*6))/2, 60);
     strip.setBrightness(10);
-    strip.setPixelColor(0, 255, 255, 0);
+    strip.setPixelColor(0, 255, 0, 0);
     // show all pixels  
     strip.show();
+    }
     break;
     case 1:
+    if(freq!=0){
     flfreq = freq/1.0;
     myESPboy.tft.setTextSize(1);
     myESPboy.tft.drawFloat(flfreq, 1,myESPboy.tft.drawString("Hz", 70, 60)+38,60);
     strip.setPixelColor(0, 0, 255, 255);
     strip.show();
+    } else {
+      flfreq = freq/1.0;
+myESPboy.tft.setTextColor(TFT_RED);
+    myESPboy.tft.setTextSize(1);
+    myESPboy.tft.drawString (ks, (128-(strlen(ks)*6))/2, 60);
+    strip.setBrightness(10);
+    strip.setPixelColor(0, 255, 0, 0);
+    // show all pixels  
+    strip.show();
+    }
     break;
     case 2:
     flfreq = freq/1.0;
@@ -159,12 +182,12 @@ switch (laenge) {
     flfreq = freq/1000.0;
     myESPboy.tft.setTextSize(1);
     myESPboy.tft.drawFloat(flfreq, 6,myESPboy.tft.drawString("kHz", 80, 60)+8,60);
-    strip.setPixelColor(0, 55, 25, 0);
+    strip.setPixelColor(0, 255, 255, 0);
     strip.show();
 
     break;  
   case 7:
-  flfreq = freq/1000000.0;
+  flfreq = freq/10000000.0;
     myESPboy.tft.setTextSize(1);
     myESPboy.tft.drawFloat(flfreq, 7,myESPboy.tft.drawString("MHz", 80, 60)+8,60);
     strip.setBrightness(10);
@@ -173,7 +196,7 @@ switch (laenge) {
     strip.show();
     break;
    case 8:
-   flfreq = freq/1000000.0;
+   flfreq = freq/10000000.0;
    myESPboy.tft.setTextSize(1);
     myESPboy.tft.drawFloat(flfreq,8,myESPboy.tft.drawString("MHz", 80, 60)+8,60);
     strip.setPixelColor(0, 65, 0, 55);
@@ -181,7 +204,7 @@ switch (laenge) {
     strip.show();
     break;
     case 9:
-    flfreq = freq/1000000.0;
+    flfreq = freq/10000000.0;
    myESPboy.tft.setTextSize(2);
     myESPboy.tft.drawFloat(flfreq, 9,myESPboy.tft.drawString("MHz", 45, 80)-25,40);
     strip.setPixelColor(0, 10, 10, 120);
@@ -243,8 +266,8 @@ switch (laenge) {
 
   
  //}
-delay(200);
- myESPboy.tft.fillScreen(TFT_BLACK);
+delay(0);
+
 
 }
 
@@ -294,7 +317,7 @@ uint8_t get_byte()
 	
 	read32();
   while(!mcp2.digitalRead(C_state)){yield();}// Stay until HIGH and loop back
-	
+	myESPboy.tft.fillScreen(TFT_BLACK);
 	mcp2.digitalWrite(CE_Not, HIGH);
   }
 

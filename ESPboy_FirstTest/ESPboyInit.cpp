@@ -4,7 +4,6 @@ for www.ESPboy.com project by RomanS
 https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun
 v1.0
 */
-
 #include "ESPboyInit.h"
 
 ESPboyInit::ESPboyInit(){};
@@ -21,10 +20,6 @@ void ESPboyInit::begin(char *appName) {
 //mcp23017 init for buttons, LED LOCK and TFT Chip Select pins
   mcp.begin(MCP23017address);
   delay(100);
-  
-  for (int i=0;i<8;i++){  
-     mcp.pinMode(i, INPUT);
-     mcp.pullUp(i, HIGH);}
 
 //sound init and test
   pinMode(SOUNDPIN, OUTPUT);
@@ -42,10 +37,14 @@ void ESPboyInit::begin(char *appName) {
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 
+//LED pin LOCK OFF
+  mcp.pinMode(LEDLOCK, OUTPUT);
+  mcp.digitalWrite(LEDLOCK, HIGH);
+
 //draw ESPboylogo  
-  tft.drawXBitmap(42, 22, ESPboyLogo, 44, 44, TFT_YELLOW);
+  tft.drawXBitmap(42, 22, ESPboyLogo, 64, 64, TFT_YELLOW);
   tft.setTextSize(1);
-  tft.setTextColor(TFT_BLUE);
+  tft.setTextColor(TFT_YELLOW);
   tft.drawString (appName, (128-(strlen(appName)*6))/2, 112);
   delay(3000);
 //LCD backlit fading on
@@ -56,10 +55,7 @@ void ESPboyInit::begin(char *appName) {
 //clear TFT and backlit on high
   dac.setVoltage(4095, true);
   tft.fillScreen(TFT_BLACK);
-
-//LED pin LOCK OFF
-  mcp.pinMode(LEDLOCK, OUTPUT);
-  mcp.digitalWrite(LEDLOCK, HIGH); 
+ 
 };
 
 
